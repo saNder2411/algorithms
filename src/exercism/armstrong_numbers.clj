@@ -3,7 +3,6 @@
 
 ;; source: https://exercism.org/tracks/clojure/exercises/armstrong-numbers
 
-
 (defn armstrong? [num]
   (let [nums (map #(-> % str read-string) (str num))
         exponent (count nums)
