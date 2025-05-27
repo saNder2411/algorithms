@@ -18,9 +18,9 @@
 ;The second index is its position in the row — the column index in the matrix, which represents its x-coordinate.
 
 (defn- turn-over-matrix [matrix]
-  (vec (map-indexed (fn [i _]
-                      (mapv #(get % i) matrix))
-                    (first matrix))))
+  (if (empty? matrix)
+    matrix
+    (apply mapv vector matrix)))
 
 (defn saddle-points [matrix]
   (let [col-matrix (turn-over-matrix matrix)]
@@ -36,10 +36,20 @@
                   {:row-i 0 :res #{}}
                   matrix))))
 
+
+(defn sort-bool [data]
+  (apply into (reduce (fn [[t f] v]
+                        (if v [(conj t v) f] [t (conj f v)]))
+                      [[] []]
+                      data)))
+
 (comment
+  (turn-over-matrix [])
   (saddle-points [[9 8 7]
                   [5 3 2]
                   [6 6 7]])
+
+  (sort-bool [true false false true true false false true])
 
   (saddle-points [])
 

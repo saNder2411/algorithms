@@ -14,38 +14,27 @@
 ;;-----------------------------------
 
 (defn num->fizz-buzz [n]
-  (cond
-    (and (zero? (mod n 3)) (zero? (mod n 5))) "FizzBuzz"
-    (zero? (mod n 3)) "Fizz"
-    (zero? (mod n 5)) "Buzz"
-    :else n))
+  (let [res (cond-> ""
+                    (zero? (mod n 3)) (str "Fizz")
+                    (zero? (mod n 5)) (str "Buzz"))]
+    (if (empty? res) (str n) res)))
 
-(defn fizz-buzz-v-0 [start-n end-n]
+;;-----------------------------------
+
+(defn fizz-buzz-seq-0 [start-n end-n]
   (doseq [n (range start-n (inc end-n))]
     (println (num->fizz-buzz n))))
 
 ;;-----------------------------------
 
-(defn fizz-buzz-v-1 [start end]
-  (doseq [n (range start (inc end))]
-    (println
-      (cond
-        (zero? (mod n 15)) "FizzBuzz"
-        (zero? (mod n 3)) "Fizz"
-        (zero? (mod n 5)) "Buzz"
-        :else n))))
-
-;;-----------------------------------
-
-(defn fizz-buzz-v-2 [start end]
+(defn fizz-buzz-seq-1 [start end]
   (println
     (apply str
            (for [n (range start (inc end))]
-             (cond
-               (zero? (mod n 15)) "FizzBuzz\n"
-               (zero? (mod n 3)) "Fizz\n"
-               (zero? (mod n 5)) "Buzz\n"
-               :else (str n "\n"))))))
+             (let [res (cond-> ""
+                               (zero? (mod n 3)) (str "Fizz")
+                               (zero? (mod n 5)) (str "Buzz"))]
+               (if (empty? res) (str n "\n") (str res "\n")))))))
 
 ;;-----------------------------------
 
@@ -54,37 +43,30 @@
      (println
        ~(apply str
                (for [n (range start (inc end))]
-                 (cond
-                   (zero? (mod n 15)) "FizzBuzz\n"
-                   (zero? (mod n 3)) "Fizz\n"
-                   (zero? (mod n 5)) "Buzz\n"
-                   :else (str n "\n")))))))
+                 (let [res (cond-> ""
+                                   (zero? (mod n 3)) (str "Fizz")
+                                   (zero? (mod n 5)) (str "Buzz"))]
+                   (if (empty? res) (str n "\n") (str res "\n"))))))))
 
-(def fizz-buzz-v-3 (make-fb 1 100))
+(def fizz-buzz-seq-2 (make-fb 1 100))
 
 (comment
-  (time (fizz-buzz-v-0 1 10000))
-  ;; "Elapsed time: 121.393147 msecs"
 
-  (time (fizz-buzz-v-1 1 10000))
-  ;; "Elapsed time: 118.889255 msecs"
+  (num->fizz-buzz 180)
+  (time (fizz-buzz-seq-0 1 10000))
+  ;; "Elapsed time: 111.422328 msecs"
 
-  (time (fizz-buzz-v-2 1 10000))
-  ;; "Elapsed time: 4.023513 msecs"
+  (time (fizz-buzz-seq-1 1 10000))
+  ;; "Elapsed time: 2.226035 msecs"
 
-  (time (fizz-buzz-v-2-c 1 10000))
+  (time (fizz-buzz-seq-2))
+  ;; "Elapsed time: 0.11046 msecs"
 
-  (time (fizz-buzz-v-3))
-  ;; "Elapsed time: 1.205072 msecs"
+  (my-time 5 (fizz-buzz-seq-1 1 100))
+  ;; "Elapsed time: 1629.845005 msecs"
 
-  (my-time 5 (fizz-buzz-v-1 1 100))
-  ;; "Elapsed time: 5402.197219 msecs"
-
-  (my-time 5 (fizz-buzz-v-2 1 100))
-  ;; "Elapsed time: 863.081299 msecs"
-
-  (my-time 5 (fizz-buzz-v-3))
-  ;; "Elapsed time: 86.575677 msecs"
+  (my-time 5 (fizz-buzz-seq-2))
+  ;; "Elapsed time: 82.574892 msecs"
 
   (macroexpand '(make-fb 1 30))
   )
